@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  proxy:
+    image: nginx:1.19.6-alpine
+    container_name: ls1-proxy
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./code:/var/www/code
+    restart: unless-stopped
+    networks:
+      - php-network
+    depends_on:
+      - php
+
+  php:
+    image: php:8.0.1-fpm-alpine3.13
+    container_name: php-fpm
+    volumes:
+      - ./code:/var/www/code
+    restart: unless-stopped
+    networks:
+      - php-network
+
+networks:
+  php-network:
+    driver: bridge
